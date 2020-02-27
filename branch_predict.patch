@@ -1,0 +1,36 @@
+diff --git a/src/arch/x86/isa/macroop.isa b/src/arch/x86/isa/macroop.isa
+index 99d76b4..321d9db 100644
+--- a/src/arch/x86/isa/macroop.isa
++++ b/src/arch/x86/isa/macroop.isa
+@@ -128,6 +128,14 @@ def template MacroConstructor {{
+             //alloc_microops is the code that sets up the microops
+             //array in the parent class.
+             %(alloc_microops)s;
++            /**
++             * We need to mark the last microop as control so that MicroCPU
++             * fetch2 stage will try to predict the branch.
++             */
++            if (%(num_microops)s > 0) {
++                flags[IsControl] = microops[%(num_microops)s - 1]->isControl();
++                flags[IsCondControl] = microops[%(num_microops)s - 1]->isCondCtrl();
++            }
+         }
+ }};
+ 
+diff --git a/src/cpu/minor/decode.cc b/src/cpu/minor/decode.cc
+index 390ca5f..cc6e891 100644
+--- a/src/cpu/minor/decode.cc
++++ b/src/cpu/minor/decode.cc
+@@ -192,6 +192,12 @@ Decode::evaluate()
+                     if (static_micro_inst->isLastMicroop()) {
+                         output_inst->predictedTaken = inst->predictedTaken;
+                         output_inst->predictedTarget = inst->predictedTarget;
++                        /**
++                         * We need to set triedToPredict so that when branch
++                         * signal comes back Fetch2 stage will update the
++                         * predictor.
++                         */
++                        output_inst->triedToPredict = inst->triedToPredict;
+                     }
+ 
+                     DPRINTF(Decode, "Microop decomposition inputIndex:"
