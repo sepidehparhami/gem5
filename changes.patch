@@ -1,0 +1,85 @@
+diff --git a/src/arch/x86/isa/decoder/x87.isa b/src/arch/x86/isa/decoder/x87.isa
+index 4283d8d..24fda9a 100644
+--- a/src/arch/x86/isa/decoder/x87.isa
++++ b/src/arch/x86/isa/decoder/x87.isa
+@@ -58,7 +58,10 @@ format WarnUnimpl {
+                 0x3: Inst::FSUB1(Eq);
+                 default: Inst::FSUB1(Md);
+             }
+-            0x5: fsubr();
++            0x5: decode MODRM_MOD {
++                0x3: Inst::FSUBR1(Eq);
++                default: Inst::FSUBR1(Md);
++            }
+             0x6: decode MODRM_MOD {
+                 0x3: Inst::FDIV1(Eq);
+                 default: Inst::FDIV1(Md);
+@@ -234,12 +237,12 @@ format WarnUnimpl {
+                 default: fcomp();
+             }
+             0x4: decode MODRM_MOD {
+-                0x3: fsubr();
++                0x3: Inst::FSUB2(Eq);
+                 default: Inst::FSUB2(Mq);
+             }
+             0x5: decode MODRM_MOD {
+-                0x3: Inst::FSUB2(Eq);
+-                default: fsubr();
++                0x3: Inst::FSUBR2(Eq);
++                default: Inst::FSUBR2(Mq);
+             }
+             0x6: decode MODRM_MOD {
+                 0x3: fdivr();
+diff --git a/src/arch/x86/isa/insts/x87/arithmetic/subtraction.py b/src/arch/x86/isa/insts/x87/arithmetic/subtraction.py
+index 2275757..90ec227 100644
+--- a/src/arch/x86/isa/insts/x87/arithmetic/subtraction.py
++++ b/src/arch/x86/isa/insts/x87/arithmetic/subtraction.py
+@@ -35,7 +35,47 @@
+ #
+ # Authors: Gabe Black
+ 
+-microcode = '''
++microcode = ''' 
++def macroop FSUBR1_R
++{
++    subfp st(0), sti, st(0)
++};
++
++
++def macroop FSUBR1_M
++{
++    ldfp ufp1, seg, sib, disp
++    subfp st(0), ufp1, st(0)
++};
++
++def macroop FSUBR1_P
++{
++    rdip t7
++    ldfp ufp1, seg, riprel, disp
++    subfp st(0), ufp1, st(0)
++};
++
++def macroop FSUBR2_R
++{
++    subfp sti, st(0), sti
++};
++
++def macroop FSUBR2_M
++{
++    ldfp ufp1, seg, sib, disp
++    subfp st(0), ufp1, st(0)
++};
++
++def macroop FSUBR2_P
++{
++    rdip t7
++    ldfp ufp1, seg, riprel, disp
++    subfp st(0), ufp1, st(0)
++};
++
++
++
++
+ def macroop FSUB1_R
+ {
+     subfp st(0), st(0), sti

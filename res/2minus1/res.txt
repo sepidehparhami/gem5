@@ -1,0 +1,24 @@
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 compiled Mar  6 2020 21:42:31
+gem5 started Mar  6 2020 21:49:55
+gem5 executing on tetracosa.cs.ucla.edu, pid 57182
+command line: ./build/X86/gem5.opt --outdir res/2minus1 configs/se.py -c fsubr -o '1 2'
+
+Global frequency set at 1000000000000 ticks per second
+**** REAL SIMULATION ****
+1.000000
+Exiting @ tick 89623500 because exiting with last active thread context
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+gem5 compiled Mar  6 2020 21:42:31
+gem5 started Mar  6 2020 21:50:50
+gem5 executing on tetracosa.cs.ucla.edu, pid 57314
+command line: ./build/X86/gem5.opt --outdir res/2minus1 configs/se.py -c fsubr -o '1 2'
+
+Global frequency set at 1000000000000 ticks per second
+**** REAL SIMULATION ****
+1.000000
+Exiting @ tick 89623500 because exiting with last active thread context
